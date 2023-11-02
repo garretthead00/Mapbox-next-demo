@@ -1,10 +1,10 @@
-import Map from './components/Map'
+import MapView from './components/MapView'
 
 export default function Home() {
   return (
     <main className="flex h-full w-full">
       <div className="flex w-full">
-       <Map />
+       <MapView />
       </div>
     </main>
   );

@@ -1,5 +1,6 @@
 import { Inter } from 'next/font/google'
 import Sidebar from './components/Sidebar'
+import 'mapbox-gl/dist/mapbox-gl.css';
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -12,9 +13,6 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <head>
-        <link href="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css" rel="stylesheet" />
-      </head>
       <body className={inter.className}>
         <div className="flex h-screen">
           <Sidebar />
