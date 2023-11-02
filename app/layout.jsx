@@ -1,6 +1,7 @@
 import { Inter } from 'next/font/google'
 import Sidebar from './components/Sidebar'
 import 'mapbox-gl/dist/mapbox-gl.css';
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })

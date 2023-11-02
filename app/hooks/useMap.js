@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Map, Marker, Popup } from "mapbox-gl";
-import { MarkerDetails } from "../components/MarkerDetails";
+import mapboxgl from "mapbox-gl";
+import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 
 export const useMap = (container) => {
   const mapInitRef = useRef(null);
@@ -32,29 +32,30 @@ export const useMap = (container) => {
       mapInitRef.current?.off("dblclick", generateNewMarker);
     };
   }, []);
-
-  //   useEffect(() => {
-  //     mapInitRef.current && mapInitRef.current.on("load", (e) => generateNewMarker({ map: mapInitRef.current, ...mapInitRef.current.getCenter() }))
-  //     return () => {
-  //       mapInitRef.current?.off("load", generateNewMarker);
-  //     };
-  //   }, []);
 };
 
 const initMap = (container, coordinates, opts) => {
-  const map = new Map({
+  const map = new mapboxgl.Map({
     container: container,
     center: coordinates,
-    accessToken:
-      "pk.eyJ1Ijoic3VwZXJnYWxhY3RpcHVzIiwiYSI6ImNsbzkwcWtrdDA1bngya21rMm1la2Q2NXMifQ.sDlPzxnnduARjS7IFc7rjQ",
+    accessToken: process.env.NEXT_PUBLIC_MAPBOX_GL_ACCESS_TOKEN,
     doubleClickZoom: false,
     ...opts,
   });
+
+  // Add the control to the map.
+  map.addControl(
+    new MapboxGeocoder({
+      accessToken: process.env.NEXT_PUBLIC_MAPBOX_GL_ACCESS_TOKEN,
+      mapboxgl: mapboxgl,
+    })
+  );
   return map;
 };
 
 export const generateNewMarker = ({ lat, lng, map }) => {
-  const popUp = new Popup({ closeButton: false, anchor: "left" }).setHTML(`
+  const popUp = new mapboxgl.Popup({ closeButton: false, anchor: "left" })
+    .setHTML(`
         <div className="popup">
             <div className="flex w-8 h-8 border border-red-700 m-2 p-2">
             [${lng}, ${lat}]
@@ -62,21 +63,14 @@ export const generateNewMarker = ({ lat, lng, map }) => {
         </div>
         `);
 
-  const marker = new Marker({ color: "#63df29", scale: 1.5 })
+  const marker = new mapboxgl.Marker({ color: "#63df29", scale: 1.5 })
     .setLngLat([lng, lat])
     .setPopup(popUp)
     .setDraggable(true)
     .addTo(map);
 
-    function onDragEnd() {
-        const lngLat = marker.getLngLat();
-        coordinates.style.display = 'block';
-        coordinates.innerHTML = `Longitude: ${lngLat.lng}<br />Latitude: ${lngLat.lat}`;
-    }
-
-    marker.on('dragend', () => {
-        const lngLat = marker.getLngLat();
-        console.log("dragEnd at", lngLat);
-    })
+  marker.on("dragend", () => {
+    const lngLat = marker.getLngLat();
+    console.log("dragEnd at", lngLat);
+  });
 };
-
